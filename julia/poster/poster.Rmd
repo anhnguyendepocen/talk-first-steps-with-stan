@@ -9,7 +9,7 @@ output:
 
 # {.col-1}
 
-## Introduction
+## Workflow
 
 ```{r, echo = FALSE}
 DiagrammeR::grViz("workflow.gv")
