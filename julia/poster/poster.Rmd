@@ -12,7 +12,7 @@ output:
 ## Introduction
 
 ```{r, echo = FALSE}
-DiagrammeR::grViz("problem.gv")
+DiagrammeR::grViz("workflow.gv")
 ```
 
 # {.col-2}

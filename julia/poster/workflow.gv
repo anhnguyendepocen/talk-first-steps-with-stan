@@ -2,7 +2,7 @@ digraph {
   rankdir="LR"
   // rankdir="TB"
   
-  graph [fontname = "Roboto" fontsize = "9"];
+  graph [fontname = "Roboto" fontsize = "9" splines=ortho nodesep=0.3 ];
   node  [fontname = "Roboto" fontsize = "9"];
   edge  [fontname = "Roboto" fontsize = "9"];
 
