@@ -1,0 +1,9 @@
+a::before {
+	content: none;
+}
+a::after {
+	content: none;
+}
+a {
+	font-family: inherit;
+}

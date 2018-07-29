@@ -1,0 +1,55 @@
+---
+title: "Getting Started with Stan & Julia"
+subtitle: "Andrew Collier<br/>`r icon::fa('twitter')` datawookie `r icon::fa('github')` datawookie `r icon::fa('home')` datawookie.netlify.com `r icon::fa('envelope')` andrew@exegetic.biz"
+output:
+  drposter::drposter_poster:
+    self_contained: false
+    css: custom.css
+---
+
+# {.col-1}
+
+## Introduction
+
+```{r, echo = FALSE}
+DiagrammeR::grViz("problem.gv")
+```
+
+# {.col-2}
+
+## Installation
+
+The `Stan` package is available from <https://github.com/goedman/Stan.jl>.
+
+```
+julia> Pkg.add("Stan")
+```
+
+It depends on the shell interface to Stan, `CmdStan`. Set the `CMDSTAN_HOME` environment variable to the folder in which you unpacked `CmdStan`.
+
+```
+julia> using Stan
+```
+
+# {.col-2}
+
+## Bar
+
+Two major functions:
+
+- `Stanmodel()`
+- `stan()`
+
+## Zap
+
+
+## Conclusion
+
+
+## Meta
+
+![](/home/colliera/proj/Z-314-datawookie-site/static/img/2018/07/julia-stan.png)
+
+- This poster was created using R Markdown and `drposter` (<https://github.com/bbucior/drposter>).
+- Icônes FontAwesome icons via `icon` (<https://github.com/ropenscilabs/icon>).
+- Diagrams built with GraphViz and `DiagrammeR` (<http://rich-iannone.github.io/DiagrammeR/>).
