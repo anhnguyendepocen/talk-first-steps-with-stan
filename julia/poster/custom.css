@@ -1,3 +1,7 @@
+body {
+  font-size: 36px;
+}
+
 a::before {
 	content: none;
 }
@@ -6,4 +10,22 @@ a::after {
 }
 a {
 	font-family: inherit;
+}
+
+header {
+  display: grid;
+  grid-template-columns: 1fr 5fr;
+}
+
+.level2.single > * {
+  flex: none;
+}
+
+/* Exclude mathjax which has custom HTML tags, and doesn't fit with the generic spacing */
+[class^="mjx-"] {
+	margin-top: 0;
+}
+/* Also override the custom margins of "display equations" since they're already governed by an enclosing block of some sort, like a paragraph */
+.MJXc-display {
+	margin: 0 !important;
 }

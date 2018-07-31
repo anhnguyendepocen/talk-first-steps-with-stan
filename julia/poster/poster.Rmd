@@ -1,11 +1,44 @@
 ---
-title: "Getting Started with Stan & Julia"
-subtitle: "Andrew Collier<br/>`r icon::fa('twitter')` datawookie `r icon::fa('github')` datawookie `r icon::fa('home')` datawookie.netlify.com `r icon::fa('envelope')` andrew@exegetic.biz"
+title: "Getting Started with Julia & Stan"
+author: "Andrew Collier"
+affiliation: "`r icon::fa('twitter')` `r icon::fa('github')` datawookie `r icon::fa('home')` datawookie.netlify.com `r icon::fa('envelope')` andrew@exegetic.biz"
 output:
   drposter::drposter_poster:
+    fill_page: FALSE
     self_contained: false
+    template: drposter.html
     css: custom.css
+header-logo: '/home/colliera/proj/Z-314-datawookie-site/static/img/2018/07/julia-stan.png'
+csl: american-chemical-society.csl
+references:
+- id: stan-ref
+  URL: 'http://mc-stan.org/'
+  type: webpage
+- id: stanjl-ref
+  URL: 'https://github.com/goedman/Stan.jl'
+  type: webpage
+- id: diagrammer-ref
+  URL: 'http://rich-iannone.github.io/DiagrammeR/'
+  type: webpage
+- id: drposter-ref
+  URL: 'https://github.com/bbucior/drposter/'
+  type: webpage
+- id: icon-ref
+  URL: 'https://github.com/ropenscilabs/icon/'
+  type: webpage
+- id: erum-video
+  URL: 'https://youtu.be/kr_pAPS_oyM'
+  type: webpage
+- id: erum-slides
+  URL: 'https://datawookie.github.io/talk-first-steps-with-stan/'
+  type: webpage
 ---
+
+```{r setup, include=FALSE}
+# knitr::opts_chunk$set(echo = TRUE)
+library(dplyr)
+library(stringr)
+```
 
 # {.col-1}
 
@@ -17,39 +50,103 @@ DiagrammeR::grViz("workflow.gv")
 
 # {.col-2}
 
-## Installation
+## Introduction
 
-The `Stan` package is available from <https://github.com/goedman/Stan.jl>.
+### Background {.fullwidth}
+
+Stan[@stan-ref] is a probabilistic programming language. It uses Markov Chain Monte Carlo (MCMC) to generate samples from the posterior distribution.
+
+$$
+p(\theta|y, X) = \frac{p(y|X, \theta) p(\theta)}{p(y)} \propto p(y|\theta) p(\theta)
+$$
+
+### Installation
+
+The `Stan.jl` package[@stanjl-ref] provides an interface from Julia. It depends on the shell interface to Stan, `CmdStan`. Set the `CMDSTAN_HOME` environment variable to the folder in which you unpacked `CmdStan`.
 
 ```
 julia> Pkg.add("Stan")
-```
-
-It depends on the shell interface to Stan, `CmdStan`. Set the `CMDSTAN_HOME` environment variable to the folder in which you unpacked `CmdStan`.
-
-```
 julia> using Stan
 ```
 
+## Case Study
+
+We'll be using `Stan.jl` to analyse data gathered from a slot machine.
+
+### Data {.fullwidth}
+
+A sample of the data:
+
+```
+   session  spins  hits wager payout  hit_rate       rtp
+ 1       1      7     2    10      3 0.2857143 0.3000000
+ 2       2     19     7    30     29 0.3684211 0.9666667
+ 3       3     19     3    22      3 0.1578947 0.1363636
+ 4       4     26     7    30     13 0.2692308 0.4333333
+ 5       5     23     8    31     35 0.3478261 1.1290323
+```
+
+Wrap the salient columns in a dictionary.
+
+```
+const binomial_data = Dict("N"     => size(slots, 1),
+                           "hits"  => slots[:hits],
+                           "spins" => slots[:spins])
+```
+
+## The Model
+
+<div class="fullwidth">
+The Stan model can be defined as a string or in an external file.
+
+```
+const binomial_model = "
+data {
+  int<lower=0> N;
+  int hits[N];
+  int spins[N];
+}
+parameters {
+  real<lower=0,upper=1> theta;
+}
+model {
+  hits ~ binomial(spins, theta);       // Likelihood
+  theta ~ beta(2, 2);                  // Prior
+}
+";
+```
+</div>
+
+## Community {style="--header-color:darkred; --other-color-for-h2-gradient:red;"}
+
 # {.col-2}
 
-## Bar
+## Build and Run the Model
 
-Two major functions:
+<div class="fullwidth">
+```
+stanmodel = Stanmodel(model=binomial_model, nchains=4);
+```
 
-- `Stanmodel()`
-- `stan()`
-
-## Zap
-
+```
+rc, simulated = stan(stanmodel, [binomial_data]);
+```
+</div>
 
 ## Conclusion
 
+This case study was presented in greated detail at eRum[@erum-video; @erum-slides].
 
-## Meta
+## Meta {.single}
 
-![](/home/colliera/proj/Z-314-datawookie-site/static/img/2018/07/julia-stan.png)
+<div class="fullwidth">
+This poster was created using
 
-- This poster was created using R Markdown and `drposter` (<https://github.com/bbucior/drposter>).
-- Icônes FontAwesome icons via `icon` (<https://github.com/ropenscilabs/icon>).
-- Diagrams built with GraphViz and `DiagrammeR` (<http://rich-iannone.github.io/DiagrammeR/>).
+- R Markdown and `drposter`[@drposter-ref]
+- FontAwesome icons via `icon`[@icon-ref] and
+- diagrams using GraphViz and `DiagrammeR`[@diagrammer-ref].
+</div>
+
+## References
+
+<div id="refs" class="references"></div>
