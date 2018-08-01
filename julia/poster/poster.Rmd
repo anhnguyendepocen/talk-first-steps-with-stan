@@ -17,6 +17,12 @@ references:
 - id: stanjl-ref
   URL: 'https://github.com/goedman/Stan.jl'
   type: webpage
+- id: mamba-doc
+  URL: 'http://mambajl.readthedocs.io/en/latest/index.html'
+  type: webpage
+- id: gadfly-doc
+  URL: 'http://gadflyjl.org/latest/'
+  type: webpage
 - id: diagrammer-ref
   URL: 'http://rich-iannone.github.io/DiagrammeR/'
   type: webpage
@@ -67,6 +73,7 @@ The `Stan.jl` package[@stanjl-ref] provides an interface from Julia. It depends 
 ```
 julia> Pkg.add("Stan")
 julia> using Stan
+julia> using Mamba
 ```
 
 ## Case Study
@@ -117,8 +124,6 @@ model {
 ```
 </div>
 
-## Community {style="--header-color:darkred; --other-color-for-h2-gradient:red;"}
-
 # {.col-2}
 
 ## Build and Run the Model
@@ -131,22 +136,41 @@ stanmodel = Stanmodel(model=binomial_model, nchains=4);
 ```
 rc, simulated = stan(stanmodel, [binomial_data]);
 ```
+
+Result returned as a `Mamba.Chains`[@mamba-doc] object.
 </div>
+
+### Diagnostics {.fullwidth}
+
+A wide range of siagnostics are available through `Mamba` to check on the convergence of the chains.
+
+### Results {.fullwidth}
+
+```
+> describe(simulated[:, ["theta"], :], q=[0.025, 0.5, 0.975])
+```
+```
+Empirical Posterior Estimates:
+         Mean         SD        Naive SE        MCSE      ESS
+theta 0.31289054 0.010642713 0.00016827606 0.00029036710 1000
+
+Quantiles:
+         2.5%      50.0%     97.5%  
+theta 0.29309677 0.312797 0.33427225
+```
+
+Plots are generated using `Gadfly`[@gadfly-doc].
+
+![](results-cropped.png)
 
 ## Conclusion
 
 This case study was presented in greated detail at eRum[@erum-video; @erum-slides].
 
-## Meta {.single}
+## References {style="--header-color:darkred; --other-color-for-h2-gradient:red;"}
 
 <div class="fullwidth">
-This poster was created using
-
-- R Markdown and `drposter`[@drposter-ref]
-- FontAwesome icons via `icon`[@icon-ref] and
-- diagrams using GraphViz and `DiagrammeR`[@diagrammer-ref].
+This poster was created using R Markdown and `drposter`[@drposter-ref] with FontAwesome icons via `icon`[@icon-ref] and diagrams using GraphViz and `DiagrammeR`[@diagrammer-ref].
 </div>
-
-## References
 
 <div id="refs" class="references"></div>
