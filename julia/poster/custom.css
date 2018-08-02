@@ -6,6 +6,11 @@ body > div.slides {
   margin-top: 0;
 }
 
+:root {
+	--header-color: black;
+	--other-color-for-h2-gradient: black;
+}
+
 a::before {
 	content: none;
 }
@@ -16,11 +21,28 @@ a {
 	font-family: inherit;
 }
 
+.level2.single > * {
+  flex: none;
+}
+
+/* HEADER layout */
+
 header {
   display: grid;
   grid-template-columns: 2fr 4fr;
 }
 
-.level2.single > * {
-  flex: none;
+header > div:nth-child(2) {
+  text-align: left;
+  padding-left: 80px;
+}
+header > div:nth-child(2) > h2.author {
+  margin-top: 0.25em;
+}
+header > div:nth-child(2) > div.affiliation {
+  margin-top: 0.25em;
+  font-size: 1.25cm;
+}
+header > div:nth-child(2) > div.affiliation > i {
+ margin-top: 0; 
 }

@@ -1,7 +1,7 @@
 ---
 title: "Getting Started with Julia & Stan"
-author: "Andrew Collier"
-affiliation: "`r icon::fa('twitter')` `r icon::fa('github')` datawookie `r icon::fa('home')` datawookie.netlify.com `r icon::fa('envelope')` andrew@exegetic.biz"
+author: "Andrew Collier / Exegetic (www.exegetic.biz)"
+affiliation: "`r icon::fa('twitter')` datawookie<br>`r icon::fa('home')` datawookie.netlify.com<br>`r icon::fa('envelope')` andrew@exegetic.biz"
 output:
   drposter::drposter_poster:
     fill_page: FALSE
@@ -46,14 +46,6 @@ library(dplyr)
 library(stringr)
 ```
 
-# {.col-1}
-
-## Workflow
-
-```{r, echo = FALSE}
-DiagrammeR::grViz("workflow.gv")
-```
-
 # {.col-2}
 
 ## Introduction
@@ -70,9 +62,9 @@ Stan[@stan-ref] is a probabilistic programming language. It uses Markov Chain Mo
 The `Stan.jl` package[@stanjl-ref] provides an interface to Stan from Julia. It depends on the shell interface to Stan, `CmdStan`. Set the `CMDSTAN_HOME` environment variable to the folder in which `CmdStan` was installed.
 
 ```
-julia> Pkg.add("Stan")
-julia> using Stan
-julia> using Mamba
+> Pkg.add("Stan")
+> using Stan
+> using Mamba
 ```
 
 The `Mamba`[@mamba-doc] package is used to handle the results from Stan.
@@ -86,20 +78,20 @@ We'll be using `Stan.jl` to analyse data gathered from a slot machine. The objec
 A sample of the data:
 
 ```
-   session  spins  hits wager payout  hit_rate       rtp
- 1       1      7     2    10      3 0.2857143 0.3000000
- 2       2     19     7    30     29 0.3684211 0.9666667
- 3       3     19     3    22      3 0.1578947 0.1363636
- 4       4     26     7    30     13 0.2692308 0.4333333
- 5       5     23     8    31     35 0.3478261 1.1290323
+   session  spins  hits wager payout hit_rate    rtp
+ 1       1      7     2    10      3   0.2857 0.3000
+ 2       2     19     7    30     29   0.3684 0.9666
+ 3       3     19     3    22      3   0.1578 0.1363
+ 4       4     26     7    30     13   0.2692 0.4333
+ 5       5     23     8    31     35   0.3478 1.1290
 ```
 
 Wrap the salient columns in a dictionary.
 
 ```
-const binomial_data = Dict("N"     => size(slots, 1),
-                           "hits"  => slots[:hits],
-                           "spins" => slots[:spins])
+> const binomial_data = Dict("N"     => size(slots, 1),
+                             "hits"  => slots[:hits],
+                             "spins" => slots[:spins])
 ```
 </div>
 
@@ -109,7 +101,7 @@ const binomial_data = Dict("N"     => size(slots, 1),
 The Stan model can be defined as a string or in an external file.
 
 ```
-const binomial_model = "
+> const binomial_model = "
 data {
   int<lower=0> N;
   int hits[N];
@@ -137,14 +129,14 @@ The prior is a Beta distribution which constrains the success rate to the interv
 Create a `Stanmodel` object. The constructor accepts numerous arguments which can be used to customise the way that the problem is run.
 
 ```
-stanmodel = Stanmodel(model=binomial_model, nchains=4,
-                      num_samples=1000, num_warmup=1000);
+> stanmodel = Stanmodel(model=binomial_model, nchains=4,
+                        num_samples=1000, num_warmup=1000);
 ```
 
 Generate samples from the posterior.
 
 ```
-rc, simulated = stan(stanmodel, [binomial_data]);
+> rc, simulated = stan(stanmodel, [binomial_data]);
 ```
 
 Result returned as a `Mamba.Chains` object. A wide range of diagnostics are available through `Mamba` to check on the convergence of the chains.
@@ -159,12 +151,12 @@ Obtain high level summary of results (statistics of parameter distribution).
 ```
 ```
 Empirical Posterior Estimates:
-         Mean         SD        Naive SE        MCSE      ESS
-theta 0.31289054 0.010642713 0.00016827606 0.00029036710 1000
+         Mean      SD Naive SE     MCSE  ESS
+theta 0.31289 0.01064 0.000168 0.000290 1000
 
 Quantiles:
-         2.5%      50.0%     97.5%  
-theta 0.29309677 0.312797 0.33427225
+         2.5%   50.0%   97.5%  
+theta 0.29309 0.31279 0.33427
 ```
 
 Deeper insight using plots are generated using `Gadfly`[@gadfly-doc].
@@ -173,10 +165,18 @@ Deeper insight using plots are generated using `Gadfly`[@gadfly-doc].
 
 This case study was presented in greater detail at eRum[@erum-video; @erum-slides].
 
-## References {style="--header-color:darkred; --other-color-for-h2-gradient:red;"}
+## References
 
 <div class="fullwidth">
 This poster was created using R Markdown and `drposter`[@drposter-ref] with FontAwesome icons via `icon`[@icon-ref] and diagrams using `DiagrammeR`[@diagrammer-ref] and GraphViz.
 </div>
 
 <div id="refs" class="references"></div>
+
+# {.col-1}
+
+## Workflow {style="--header-color:darkred; --other-color-for-h2-gradient:red;"}
+
+```{r, echo = FALSE}
+DiagrammeR::grViz("workflow.gv")
+```
