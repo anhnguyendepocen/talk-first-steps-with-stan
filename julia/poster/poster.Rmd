@@ -58,17 +58,16 @@ DiagrammeR::grViz("workflow.gv")
 
 ## Introduction
 
-### Background {.fullwidth}
-
-Stan[@stan-ref] is a probabilistic programming language. It uses Markov Chain Monte Carlo (MCMC) to generate samples from the posterior distribution.
+<div class="fullwidth">
+Data are generally analysed within the framework of a model. Assuming that the model is parametric then the analysis will involve finding the most likely values for the model parameters. Bayes' Theorem makes it possible to use data and prior beliefs (or knowledge!) for parameter estimation. Furthermore, it provides not only the most likely parameter values but also their probability distribution.
 
 $$
 p(\theta|y, X) = \frac{p(y|X, \theta) p(\theta)}{p(y)} \propto p(y|\theta) p(\theta)
 $$
 
-### Installation
+Stan[@stan-ref] is a probabilistic programming language. It uses Markov Chain Monte Carlo (MCMC) to generate samples from the posterior distribution.
 
-The `Stan.jl` package[@stanjl-ref] provides an interface from Julia. It depends on the shell interface to Stan, `CmdStan`. Set the `CMDSTAN_HOME` environment variable to the folder in which you unpacked `CmdStan`.
+The `Stan.jl` package[@stanjl-ref] provides an interface to Stan from Julia. It depends on the shell interface to Stan, `CmdStan`. Set the `CMDSTAN_HOME` environment variable to the folder in which `CmdStan` was installed.
 
 ```
 julia> Pkg.add("Stan")
@@ -76,11 +75,13 @@ julia> using Stan
 julia> using Mamba
 ```
 
+The `Mamba`[@mamba-doc] package is used to handle the results from Stan.
+</div>
+
 ## Case Study
 
-We'll be using `Stan.jl` to analyse data gathered from a slot machine.
-
-### Data {.fullwidth}
+<div class="fullwidth">
+We'll be using `Stan.jl` to analyse data gathered from a slot machine. The objective is to estimate the hit rate (success probability) by fitting a binomial distribution to the data.
 
 A sample of the data:
 
@@ -100,6 +101,7 @@ const binomial_data = Dict("N"     => size(slots, 1),
                            "hits"  => slots[:hits],
                            "spins" => slots[:spins])
 ```
+</div>
 
 ## The Model
 
@@ -122,29 +124,35 @@ model {
 }
 ";
 ```
+The prior is a Beta distribution which constrains the success rate to the interval between 0 and 1 and (weakly) suggests that the most likely value is around 0.5.
 </div>
 
 # {.col-2}
 
-## Build and Run the Model
+## Results
+
+### Compile and Execute {.fullwidth}
 
 <div class="fullwidth">
+Create a `Stanmodel` object. The constructor accepts numerous arguments which can be used to customise the way that the problem is run.
+
 ```
-stanmodel = Stanmodel(model=binomial_model, nchains=4);
+stanmodel = Stanmodel(model=binomial_model, nchains=4,
+                      num_samples=1000, num_warmup=1000);
 ```
+
+Generate samples from the posterior.
 
 ```
 rc, simulated = stan(stanmodel, [binomial_data]);
 ```
 
-Result returned as a `Mamba.Chains`[@mamba-doc] object.
+Result returned as a `Mamba.Chains` object. A wide range of diagnostics are available through `Mamba` to check on the convergence of the chains.
 </div>
 
-### Diagnostics {.fullwidth}
-
-A wide range of siagnostics are available through `Mamba` to check on the convergence of the chains.
-
 ### Results {.fullwidth}
+
+Obtain high level summary of results (statistics of parameter distribution).
 
 ```
 > describe(simulated[:, ["theta"], :], q=[0.025, 0.5, 0.975])
@@ -159,18 +167,16 @@ Quantiles:
 theta 0.29309677 0.312797 0.33427225
 ```
 
-Plots are generated using `Gadfly`[@gadfly-doc].
+Deeper insight using plots are generated using `Gadfly`[@gadfly-doc].
 
 ![](results-cropped.png)
 
-## Conclusion
-
-This case study was presented in greated detail at eRum[@erum-video; @erum-slides].
+This case study was presented in greater detail at eRum[@erum-video; @erum-slides].
 
 ## References {style="--header-color:darkred; --other-color-for-h2-gradient:red;"}
 
 <div class="fullwidth">
-This poster was created using R Markdown and `drposter`[@drposter-ref] with FontAwesome icons via `icon`[@icon-ref] and diagrams using GraphViz and `DiagrammeR`[@diagrammer-ref].
+This poster was created using R Markdown and `drposter`[@drposter-ref] with FontAwesome icons via `icon`[@icon-ref] and diagrams using `DiagrammeR`[@diagrammer-ref] and GraphViz.
 </div>
 
 <div id="refs" class="references"></div>

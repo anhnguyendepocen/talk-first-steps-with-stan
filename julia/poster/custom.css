@@ -2,6 +2,10 @@ body {
   font-size: 36px;
 }
 
+body > div.slides {
+  margin-top: 0;
+}
+
 a::before {
 	content: none;
 }
